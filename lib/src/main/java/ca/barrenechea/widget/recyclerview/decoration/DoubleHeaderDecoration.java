@@ -154,9 +154,9 @@ public class DoubleHeaderDecoration extends RecyclerView.ItemDecoration {
         int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getHeight(), View.MeasureSpec.UNSPECIFIED);
 
         int childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
-                parent.getPaddingLeft() + parent.getPaddingRight(), header.getLayoutParams().width);
+                parent.getClipToPadding() ? parent.getPaddingLeft() + parent.getPaddingRight() : 0, header.getLayoutParams().width);
         int childHeight = ViewGroup.getChildMeasureSpec(heightSpec,
-                parent.getPaddingTop() + parent.getPaddingBottom(), header.getLayoutParams().height);
+                parent.getClipToPadding() ? parent.getPaddingTop() + parent.getPaddingBottom() : 0, header.getLayoutParams().height);
 
         header.measure(childWidth, childHeight);
         header.layout(0, 0, header.getMeasuredWidth(), header.getMeasuredHeight());
@@ -248,6 +248,8 @@ public class DoubleHeaderDecoration extends RecyclerView.ItemDecoration {
                     if (subSticky && over || !subSticky && !over) {
                         canvas.save();
                         left = child.getLeft();
+                        if (!parent.getClipToPadding())
+                            left = left - parent.getPaddingLeft();
                         top = getSubHeaderTop(parent, child, header, subHeader, adapterPos, layoutPos);
                         canvas.translate(left, top);
 
@@ -264,6 +266,8 @@ public class DoubleHeaderDecoration extends RecyclerView.ItemDecoration {
                     if (sticky && over || !sticky && !over) {
                         canvas.save();
                         left = child.getLeft();
+                        if (!parent.getClipToPadding())
+                            left = left - parent.getPaddingLeft();
                         top = getHeaderTop(parent, child, header, subHeader, adapterPos, layoutPos);
                         canvas.translate(left, top);
 
@@ -280,6 +284,9 @@ public class DoubleHeaderDecoration extends RecyclerView.ItemDecoration {
     private int getSubHeaderTop(@NonNull RecyclerView parent, @NonNull View child,
                                 @NonNull View header, @NonNull View subHeader, int adapterPos, int layoutPos) {
         int top = getAnimatedTop(child) - getSubHeaderHeightForLayout(subHeader);
+        if (adapterPos == 0 && !parent.getClipToPadding()) {
+            top = top - parent.getPaddingTop();
+        }
         if (subSticky) {
             if (isFirstValidChild(layoutPos, parent)) {
                 final int count = parent.getChildCount();
@@ -321,6 +328,9 @@ public class DoubleHeaderDecoration extends RecyclerView.ItemDecoration {
     private int getHeaderTop(@NonNull RecyclerView parent, @NonNull View child,
                              @NonNull View header, @NonNull View subHeader, int adapterPos, int layoutPos) {
         int top = getAnimatedTop(child) - header.getHeight() - (hasSubHeader(adapterPos) ? getSubHeaderHeightForLayout(subHeader) : 0);
+        if (adapterPos == 0 && !parent.getClipToPadding()) {
+            top = top - parent.getPaddingTop();
+        }
         if (isFirstValidChild(layoutPos, parent) && sticky) {
             final int count = parent.getChildCount();
             final long currentId = adapter.getHeaderId(adapterPos);

@@ -56,9 +56,6 @@ public class StickyTestAdapter extends RecyclerView.Adapter<StickyTestAdapter.Vi
 
     @Override
     public long getHeaderId(int position) {
-        if (position == 0) { // don't show header for first item
-            return StickyHeaderDecoration.NO_HEADER_ID;
-        }
         return (long) position / 7;
     }
 

@@ -119,10 +119,10 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
                     View.MeasureSpec.UNSPECIFIED);
 
             int childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
-                    parent.getPaddingLeft() + parent.getPaddingRight(),
+                    parent.getClipToPadding() ? parent.getPaddingLeft() + parent.getPaddingRight() : 0,
                     header.getLayoutParams().width);
             int childHeight = ViewGroup.getChildMeasureSpec(heightSpec,
-                    parent.getPaddingTop() + parent.getPaddingBottom(),
+                    parent.getClipToPadding() ? parent.getPaddingTop() + parent.getPaddingBottom() : 0,
                     header.getLayoutParams().height);
 
             header.measure(childWidth, childHeight);
@@ -164,7 +164,9 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
                     View header = getHeader(parent, adapterPos).itemView;
                     canvas.save();
 
-                    final int left = child.getLeft();
+                    int left = child.getLeft();
+                    if (!parent.getClipToPadding())
+                        left = left - parent.getPaddingLeft();
                     final int top = getHeaderTop(parent, child, header, adapterPos, layoutPos);
                     canvas.translate(left, top);
 
@@ -181,6 +183,9 @@ public class StickyHeaderDecoration extends RecyclerView.ItemDecoration {
                              @NonNull View header, int adapterPos, int layoutPos) {
         int headerHeight = getHeaderHeightForLayout(header);
         int top = ((int) child.getY()) - headerHeight;
+        if (adapterPos == 0 && !parent.getClipToPadding()) {
+            top = top - parent.getPaddingTop();
+        }
 
         if (layoutPos == 0 && sticky) {
             final int count = parent.getChildCount();

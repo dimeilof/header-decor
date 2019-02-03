@@ -19,7 +19,7 @@ repositories {
 Then add the dependency to your project:
 ```groovy
 dependencies {
-    implementation 'com.github.dimeilof:header-decor:0.3.2'
+    implementation 'com.github.dimeilof:header-decor:0.3.3'
 }
 ```
 
@@ -39,7 +39,7 @@ Then add the dependency to your project:
 <dependency>
     <groupId>com.github.dimeilof</groupId>
     <artifactId>header-decor</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 
